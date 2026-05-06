@@ -19,6 +19,14 @@ Her bölüm sahadaki gerçek dağıtımlardan damıtılmış, doğrulanmış ad�
 
     [:octicons-arrow-right-24: Dökümanı aç](openshift/nessus-scanner.md)
 
+-   :material-restore-alert:{ .lg .middle } **Lisans Kaynaklı Erişim Sorunlarında Nessus'u Fabrika Ayarlarına Sıfırlama**
+
+    ---
+
+    Lisans sorunu nedeniyle web arayüzüne erişilemediğinde Nessus'u fabrika ayarlarına döndüren `nessuscli fix` komutları ve sıfırlama sonrası lisans kayıt akışı.
+
+    [:octicons-arrow-right-24: Dökümanı aç](nessus/factory-reset.md)
+
 </div>
 
 ## Bu wiki nasıl kullanılır?

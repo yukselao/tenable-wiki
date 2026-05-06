@@ -89,6 +89,7 @@ markdown_extensions:
 nav:
   - Anasayfa: index.md
   - Managed Nessus Scanner Deployment on Red Hat OpenShift: openshift/nessus-scanner.md
+  - Lisans Kaynaklı Erişim Sorunlarında Nessus'u Fabrika Ayarlarına Sıfırlama: nessus/factory-reset.md
 
 extra:
   social:
