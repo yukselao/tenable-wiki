@@ -1,0 +1,135 @@
+---
+# ============================================================
+# 1. Namespace — per-tenant isolation
+# ============================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mssp-tenant-acme
+  labels:
+    mssp.tenant: acme
+    mssp.component: nessus-scanner
+---
+# ============================================================
+# 2. Secret — Nessus local admin credentials
+#    SC will authenticate to the scanner using this user
+# ============================================================
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nessus-credentials
+  namespace: mssp-tenant-acme
+type: Opaque
+stringData:
+  USERNAME: adminuser
+  # Min 14 chars, upper/lower/digit/symbol — change before applying
+  PASSWORD: "DefaultSecret1923%"
+---
+# ============================================================
+# 3. Deployment — Nessus scanner container
+#    - replicas MUST stay at 1 per scanner identity
+#    - stateless: no volume mounts, plugins re-pushed by SC
+#    - Recreate strategy (no rolling update for single identity)
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nessus-scanner
+  namespace: mssp-tenant-acme
+  labels:
+    app: nessus-scanner
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nessus-scanner
+  template:
+    metadata:
+      labels:
+        app: nessus-scanner
+    spec:
+      containers:
+        - name: nessus
+          image: tenable/nessus:latest-ubuntu
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8834
+              name: https
+              protocol: TCP
+          env:
+            - name: SC_MANAGED
+              value: "yes"
+            - name: NAME
+              value: "acme-scanner-01"
+            - name: USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: nessus-credentials
+                  key: USERNAME
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nessus-credentials
+                  key: PASSWORD
+          resources:
+            requests:
+              cpu: "1"
+              memory: "4Gi"
+            limits:
+              cpu: "4"
+              memory: "8Gi"
+          readinessProbe:
+            tcpSocket:
+              port: 8834
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: 8834
+            initialDelaySeconds: 180
+            periodSeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 3
+---
+# ============================================================
+# 4. Service — internal ClusterIP for the pod
+# ============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: nessus-scanner
+  namespace: mssp-tenant-acme
+spec:
+  type: ClusterIP
+  selector:
+    app: nessus-scanner
+  ports:
+    - name: https
+      port: 8834
+      targetPort: 8834
+      protocol: TCP
+---
+# ============================================================
+# 5. Route — external access for SC to pull from
+#    TLS passthrough: Nessus serves its own cert; SC validates
+# ============================================================
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: nessus-scanner
+  namespace: mssp-tenant-acme
+spec:
+  to:
+    kind: Service
+    name: nessus-scanner
+    weight: 100
+  port:
+    targetPort: https
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: None
+  wildcardPolicy: None
