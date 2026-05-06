@@ -35,6 +35,14 @@ Yayınladığımız içerikler saha tecrübelerine dayanan, doğrulanmış adım
 
     [:octicons-arrow-right-24: Dökümanı aç](nessus/factory-reset.md)
 
+-   :material-chart-line:{ .lg .middle } **Akıllı Önceliklendirme: VPR, ACR ve AES Skorlarının Birlikte Çalışma Matematiği**
+
+    ---
+
+    VPR (dinamik tehdit), ACR (varlık kritikliği) ve AES (toplam maruziyet) üçlüsünün birbirini nasıl beslediği, %60 → %1.6 gürültü filtresi, APA boyutu ve 1 Temmuz 2026 VPR v2 geçişi.
+
+    [:octicons-arrow-right-24: Dökümanı aç](tenable-one/onceliklendirme-skorlari/index.md)
+
 </div>
 
 ## Bu wiki nasıl kullanılır?

@@ -90,6 +90,7 @@ nav:
   - Anasayfa: index.md
   - Managed Nessus Scanner Deployment on Red Hat OpenShift: openshift/nessus-scanner.md
   - Lisans Kaynaklı Erişim Sorunlarında Nessus'u Fabrika Ayarlarına Sıfırlama: nessus/factory-reset.md
+  - "Akıllı Önceliklendirme: VPR, ACR ve AES Skorlarının Birlikte Çalışma Matematiği": tenable-one/onceliklendirme-skorlari/index.md
 
 extra:
   social:
