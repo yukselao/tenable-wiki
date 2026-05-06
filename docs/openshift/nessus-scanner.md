@@ -360,3 +360,125 @@ veya farklı isim) kullanılır.
 Manifest'te volume mount yoktur. Pod yeniden başladığında plugin'ler SC
 tarafından tekrar push'lanır. Bu, scanner'ı tamamen ephemeral yapar — node
 failure veya rolling redeploy durumunda sorun yaratmaz.
+
+---
+
+## Kaldırma (Uninstallation)
+
+Test kurulumunu sonlandırırken hem **namespace içindeki kaynakları** hem de
+kurulum sırasında oluşturulan **cluster-scoped bağlamayı** (SCC binding) ve
+varsa **offline image kalıntısını** temizlemen gerekir. Aşağıdaki sıra,
+kalıntı bırakmadan tam temizlik için en güvenli akıştır.
+
+!!! warning "Geri alınamaz"
+    Bu işlemler scanner'ı ve içindeki tüm yapılandırmayı (kullanıcı, secret,
+    route, kayıtlı SC ilişkisi) silmiştir. SC tarafında scanner kaydını da
+    elle çıkarman gerekir — aksi halde SC'de "offline scanner" olarak öksüz
+    bir kayıt kalır.
+
+### 1. Önce SC tarafında scanner'ı sil
+
+OpenShift'ten silmeden **önce** SC UI'da
+**Resources → Scanners → (kaldırılacak scanner) → Delete** adımını uygula.
+Önce SC'den silmek, scanner'ın "unable to connect" alarmı üretmesini engeller.
+
+### 2. Mevcut kaynakları listele (sanity check)
+
+```bash
+oc -n mssp-tenant-acme get all,routes,secrets,sa
+```
+
+Beklenen liste: `deployment/nessus-scanner`, `service/nessus-scanner`,
+`route/nessus-scanner`, `secret/nessus-credentials`, `sa/nessus-sa`,
+`sa/default` (otomatik), `sa/builder`, `sa/deployer`.
+
+### 3. SCC bağlamasını kaldır (cluster-scoped)
+
+```bash
+oc adm policy remove-scc-from-user anyuid -z nessus-sa -n mssp-tenant-acme
+```
+
+`anyuid` SCC cluster-scoped'tur — namespace silindiğinde RoleBinding
+otomatik gitse de bu komut, başka bir namespace'te aynı isimle SA
+yaratırsan eski binding'in dönüp dönmediği gibi sürpriz durumların önüne
+geçer. Açık temizlik tercih edilir.
+
+### 4. Manifest'le yaratılan kaynakları sil
+
+İki seçenek var; eşdeğer sonuç verir, durumuna göre seç:
+
+=== "A — Manifest tersine al (önerilen)"
+
+    ```bash
+    oc delete -f nessus-scanner-deployment.yaml
+    ```
+
+    `oc apply -f`'ın simetriği. Yalnızca manifest'te tanımlı 5 kaynak
+    (Namespace, Secret, Deployment, Service, Route) silinir; namespace
+    içine sonradan elle eklediğin başka bir şey varsa **dokunulmaz**.
+
+=== "B — Namespace'i komple sil (broad)"
+
+    ```bash
+    oc delete namespace mssp-tenant-acme
+    ```
+
+    Namespace silindiğinde içindeki **her şey** (manifest'tekiler +
+    `nessus-sa` ServiceAccount'u + sonradan eklenmiş ne varsa) garbage
+    collect edilir. Tek-tenant test ortamlarında en pratik yol budur.
+
+!!! tip "Hangi yöntem ne zaman?"
+    - **Test / lab**: Yöntem B (`delete namespace`) — tek komut, kalıntı yok.
+    - **Production / paylaşılan namespace**: Yöntem A (`delete -f`) — sadece
+      kendi yarattığın kaynakları silersin, namespace'teki diğer iş
+      yüklerine dokunmazsın.
+
+### 5. ServiceAccount'u temizle (yalnızca Yöntem A kullandıysan)
+
+`nessus-sa` ServiceAccount'u manifest dışında elle yaratıldığı için
+`oc delete -f` kapsamına girmez. Yöntem B'yi seçtiysen namespace ile birlikte
+zaten silinmiştir; Yöntem A'yı seçtiysen ek olarak şunu çalıştır:
+
+```bash
+oc -n mssp-tenant-acme delete serviceaccount nessus-sa
+```
+
+### 6. Offline image temizliği (yalnızca offline kurulum yaptıysan)
+
+Online kurulumda image registry cache'i otomatik yönetilir; ek temizlik
+gerekmez. Offline (CRC veya internal registry) ortamlar için:
+
+=== "Yöntem A — CRC içine yüklenmişse"
+
+    ```bash
+    crc ssh -- "sudo crictl images | grep tenable"
+    crc ssh -- "sudo crictl rmi tenable/nessus:latest-ubuntu"
+    ```
+
+=== "Yöntem B — Internal registry'ye push edilmişse"
+
+    Image'ın yaşadığı namespace silindiyse ImageStream da otomatik silinmiş
+    olur. Farklı namespace'teyse:
+
+    ```bash
+    oc -n <registry-namespace> delete imagestream nessus
+    ```
+
+### 7. Doğrulama
+
+```bash
+# Namespace artık olmamalı (Yöntem B kullanıldıysa)
+oc get namespace mssp-tenant-acme
+# Beklenen: Error from server (NotFound)
+
+# SCC binding artık nessus-sa içermemeli
+oc get scc anyuid -o yaml | grep -A2 'users:'
+# Beklenen: nessus-sa satırı yok
+
+# Route artık çözümlenmemeli
+curl -k https://<eski-route-url>:443/
+# Beklenen: connection refused / 503
+```
+
+Bu üç çıktı temizse kurulum tamamen geri alınmıştır ve aynı isimle yeniden
+kurulum yapabilirsin.
