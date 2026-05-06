@@ -15,7 +15,7 @@ hide:
 </div>
 
 Tenable ekosistemi kurulum, operasyon ve mimari notlarının yaşayan derlemesi.
-Her bölüm sahadaki gerçek dağıtımlardan damıtılmış, doğrulanmış adımları içerir.
+Her bölüm gerçek saha tecrübelerine dayanan, doğrulanmış adımları içerir.
 
 <div class="grid cards" markdown>
 
