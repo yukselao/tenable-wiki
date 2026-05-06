@@ -43,6 +43,14 @@ Yayınladığımız içerikler saha tecrübelerine dayanan, doğrulanmış adım
 
     [:octicons-arrow-right-24: Dökümanı aç](tenable-one/onceliklendirme-skorlari/index.md)
 
+-   :material-database-cog:{ .lg .middle } **Risk Bazlı Zafiyet Yönetiminde CMDB ve Envanter Entegrasyonunun Stratejik Önemi**
+
+    ---
+
+    Asset Tags ile iş bağlamı kurmak, "20.000 kritik zafiyet" sayısını karar alınabilir tabloya dönüştürmek ve CMDB entegrasyonunun remediation süreçlerine kazandırdıkları.
+
+    [:octicons-arrow-right-24: Dökümanı aç](tenable-one/cmdb-envanter-entegrasyonu/index.md)
+
 </div>
 
 ## Bu wiki nasıl kullanılır?
