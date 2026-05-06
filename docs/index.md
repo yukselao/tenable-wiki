@@ -6,6 +6,14 @@ hide:
 
 # Tenable Wiki
 
+<div class="author-card">
+  <img src="assets/avatar.png" alt="Ali Okan Yüksel" class="author-avatar" />
+  <div class="author-meta">
+    <span class="author-name">Ali Okan Yüksel</span>
+    <span class="author-role">Yazar</span>
+  </div>
+</div>
+
 Tenable ekosistemi kurulum, operasyon ve mimari notlarının yaşayan derlemesi.
 Her bölüm sahadaki gerçek dağıtımlardan damıtılmış, doğrulanmış adımları içerir.
 
