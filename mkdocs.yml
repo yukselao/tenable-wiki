@@ -12,6 +12,8 @@ copyright: Copyright &copy; 2026 Ali Okan Yüksel
 theme:
   name: material
   language: tr
+  logo: assets/avatar.png
+  favicon: assets/avatar.png
   features:
     - navigation.sections
     - navigation.indexes

@@ -41,6 +41,20 @@
   border-bottom: 1px solid #202024;
 }
 
+.md-header__button.md-logo {
+  margin: 0.2rem;
+  padding: 0.2rem;
+}
+
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 1.8rem;
+  width: 1.8rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #facc15;
+}
+
 [data-md-color-scheme="slate"] .md-typeset a:hover {
   color: #fde047;
 }
