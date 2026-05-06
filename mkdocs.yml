@@ -13,8 +13,6 @@ theme:
   name: material
   language: tr
   features:
-    - navigation.tabs
-    - navigation.tabs.sticky
     - navigation.sections
     - navigation.indexes
     - navigation.top
@@ -30,20 +28,9 @@ theme:
     - content.action.edit
     - content.action.view
   palette:
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/weather-night
-        name: Karanlık temaya geç
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/weather-sunny
-        name: Aydınlık temaya geç
+    scheme: slate
+    primary: black
+    accent: yellow
   font:
     text: Inter
     code: JetBrains Mono
@@ -51,6 +38,9 @@ theme:
     repo: fontawesome/brands/github
     edit: material/pencil
     view: material/eye
+
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
   - search:
@@ -98,9 +88,7 @@ markdown_extensions:
 
 nav:
   - Anasayfa: index.md
-  - OpenShift:
-      - openshift/index.md
-      - Managed Nessus Scanner Kurulumu: openshift/nessus-scanner.md
+  - Managed Nessus Scanner Deployment on Red Hat OpenShift: openshift/nessus-scanner.md
 
 extra:
   social:

@@ -1,4 +1,4 @@
-# Managed Nessus Scanner — OpenShift Kurulumu
+# Managed Nessus Scanner Deployment on Red Hat OpenShift
 
 OpenShift (veya tek-node CRC) üzerinde **SC tarafından yönetilen** bir Nessus
 scanner ayağa kaldırma rehberi. İki kurulum modu kapsanır: internet erişimi

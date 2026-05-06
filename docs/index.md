@@ -11,13 +11,13 @@ Her bölüm sahadaki gerçek dağıtımlardan damıtılmış, doğrulanmış ad�
 
 <div class="grid cards" markdown>
 
--   :material-kubernetes:{ .lg .middle } **OpenShift**
+-   :material-kubernetes:{ .lg .middle } **Managed Nessus Scanner Deployment on Red Hat OpenShift**
 
     ---
 
-    Managed Nessus scanner deployment'ları, SCC ayarları, online ve offline kurulum stratejileri.
+    SC tarafından yönetilen Nessus scanner'ın OpenShift / CRC üzerinde online ve offline (air-gapped) kurulumu, SCC `anyuid` çözümü, otomasyon scripti.
 
-    [:octicons-arrow-right-24: OpenShift bölümüne git](openshift/index.md)
+    [:octicons-arrow-right-24: Dökümanı aç](openshift/nessus-scanner.md)
 
 </div>
 
